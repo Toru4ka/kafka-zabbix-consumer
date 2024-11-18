@@ -1,3 +1,4 @@
+import os
 import yaml
 from confluent_kafka import Consumer
 from zabbix_utils import ZabbixAPI, Sender, ItemValue
@@ -16,6 +17,13 @@ config = load_config("config.yaml")
 # Настройка логирования
 log_level = config["logging"]["level"]
 log_file = config["logging"]["file"]  # Путь к лог-файлу из конфигурации
+log_dir = os.path.dirname(log_file)
+
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir, exist_ok=True)  # Создаём директорию, если она отсутствует
+
+if not os.path.exists(log_file):
+    open(log_file, 'w').close()  # Создаём файл, если он отсутствует
 
 logging.basicConfig(
     level=getattr(logging,log_level.upper()),  # Уровень логирования
