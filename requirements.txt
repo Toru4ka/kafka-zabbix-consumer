@@ -1,4 +1,3 @@
 confluent-kafka==2.6.0
-kafka-python==2.0.2
 PyYAML==6.0.2
 zabbix-utils==2.0.1
