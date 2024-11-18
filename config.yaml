@@ -1,0 +1,19 @@
+kafka:
+  bootstrap_servers: "sever:port"
+  group_id: "group_id"
+  auto_offset_reset: "earliest/latest"
+  enable_auto_commit: false # or true
+
+zabbix:
+  url: "http://127.0.0.1" # http / https://dns or ip
+  user: "user" # Admin
+  password: "password" # password
+  server: "127.0.0.1" # ip or dns
+  port: 10051 # default 10051
+
+batch:
+  send_interval: 60  # Time in seconds between data transmissions
+  topic: "name" # kafka topic
+
+logging:
+  level: "INFO" # default INFO
