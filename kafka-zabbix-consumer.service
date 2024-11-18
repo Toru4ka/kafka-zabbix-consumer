@@ -11,8 +11,8 @@ RestartSec=5
 User=zabbix
 Group=zabbix
 Environment=PYTHONUNBUFFERED=1
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target

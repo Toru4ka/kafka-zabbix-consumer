@@ -17,3 +17,4 @@ batch:
 
 logging:
   level: "INFO" # default INFO
+  file: "/var/log/zabbix/kafka_zabbix_consumer.log"

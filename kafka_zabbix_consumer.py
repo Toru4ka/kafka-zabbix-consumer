@@ -15,15 +15,16 @@ config = load_config("config.yaml")
 
 # Настройка логирования
 log_level = config["logging"]["level"]
+log_file = config["logging"]["file"]  # Путь к лог-файлу из конфигурации
 
 logging.basicConfig(
     level=getattr(logging,log_level.upper()),  # Уровень логирования
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(),  # Логирование в консоль
+        logging.FileHandler(log_file),  # Логирование в указанный файл
     ]
 )
-logger = logging.getLogger("zabbix_kafka_consumer")
+logger = logging.getLogger("kafka_zabbix_consumer")
 
 # Настройки Kafka
 # Извлечение настроек из конфигурации
