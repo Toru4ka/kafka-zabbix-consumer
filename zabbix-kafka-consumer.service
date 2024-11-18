@@ -1,0 +1,16 @@
+[Unit]
+Description=Kafka to Zabbix Consumer Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/kafka-zabbix-consumer
+ExecStart=/opt/kafka-zabbix-consumer/venv/bin/python /opt/kafka-zabbix-consumer/zabbix_kafka_consumer.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
