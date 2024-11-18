@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/kafka-zabbix-consumer
-ExecStart=/opt/kafka-zabbix-consumer/venv/bin/python /opt/kafka-zabbix-consumer/zabbix_kafka_consumer.py
+ExecStart=/opt/kafka-zabbix-consumer/venv/bin/python /opt/kafka-zabbix-consumer/kafka_zabbix_consumer.py
 Restart=always
 RestartSec=5
 User=zabbix
