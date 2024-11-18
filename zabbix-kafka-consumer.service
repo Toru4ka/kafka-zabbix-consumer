@@ -8,6 +8,8 @@ WorkingDirectory=/opt/kafka-zabbix-consumer
 ExecStart=/opt/kafka-zabbix-consumer/venv/bin/python /opt/kafka-zabbix-consumer/zabbix_kafka_consumer.py
 Restart=always
 RestartSec=5
+User=zabbix
+Group=zabbix
 Environment=PYTHONUNBUFFERED=1
 StandardOutput=syslog
 StandardError=syslog
