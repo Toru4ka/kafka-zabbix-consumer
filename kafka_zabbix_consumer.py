@@ -75,9 +75,9 @@ try:
         user=ZABBIX_USER,
         password=ZABBIX_PASSWORD
     )
-    logger.info("Успешное подключение к Zabbix API")
+    logger.info("Successful connection to Zabbix API")
 except Exception as e:
-    logger.error(f"Ошибка подключения к Zabbix API: {e}")
+    logger.error(f"Error connecting to Zabbix API: {e}")
     exit(1)
 
 # Инициализация Zabbix Sender
@@ -99,7 +99,7 @@ def get_host_id(host):
         host_cache[host] = host_id
         return host_id
 
-    logger.warning(f"Хост {host} не найден. Добавляем...")
+    logger.warning(f"Host {host} not found. Creating...")
     zabbix.host.create(
         host=host,
         interfaces=[{
@@ -131,7 +131,7 @@ def get_item_key(host_id, item_name):
         item_cache[key] = key
         return key
 
-    logger.warning(f"Элемент данных {item_name} не найден. Добавляем...")
+    logger.warning(f"Item {item_name} not found. Creating...")
     zabbix.item.create(
         name=item_name,
         key_=key,
@@ -152,12 +152,12 @@ def process_message(msg):
         value = data['value']
         timestamp = data['clock']  # Используем clock из сообщения Kafka
 
-        logger.debug(f"Обработка: Host={host}, Item={item_name}, Value={value}, Timestamp={timestamp}")
+        logger.debug(f"Processing: Host={host}, Item={item_name}, Value={value}, Timestamp={timestamp}")
 
         # Получаем host_id
         host_id = get_host_id(host)
         if not host_id:
-            logger.error(f"Ошибка: хост {host} не удалось создать или найти")
+            logger.error(f"Error: host {host} could not be created or found")
             return
 
         # Получаем ключ элемента данных
@@ -167,7 +167,7 @@ def process_message(msg):
         batch_data.append(ItemValue(host=host, key=key, value=value, clock=timestamp))
 
     except Exception as e:
-        logger.error(f"Ошибка обработки сообщения: {e}")
+        logger.error(f"Error processing message: {e}")
 
 
 def send_batch_if_needed():
@@ -177,11 +177,11 @@ def send_batch_if_needed():
     if current_time - last_send_time >= SEND_INTERVAL and batch_data:
         try:
             sender.send(batch_data)
-            logger.info(f"Отправлено {len(batch_data)} метрик в Zabbix")
+            logger.info(f"Sent {len(batch_data)} metrics to Zabbix")
             batch_data.clear()
             last_send_time = current_time
         except Exception as e:
-            logger.error(f"Ошибка отправки метрик в Zabbix: {e}")
+            logger.error(f"Error sending metrics to Zabbix: {e}")
 
 
 def commit_offset(msg):
@@ -189,7 +189,7 @@ def commit_offset(msg):
     try:
         consumer.commit(asynchronous=False)
     except Exception as e:
-        logger.error(f"Ошибка коммита Offset: {e}")
+        logger.error(f"Offset commit error: {e}")
 
 
 try:
@@ -200,7 +200,7 @@ try:
             send_batch_if_needed()
             continue
         if msg.error():
-            logger.error(f"Ошибка Kafka: {msg.error()}")
+            logger.error(f"Kafka error: {msg.error()}")
             continue
 
         # Обрабатываем сообщение
@@ -213,12 +213,12 @@ try:
         send_batch_if_needed()
 
 except KeyboardInterrupt:
-    logger.info("Завершение работы")
+    logger.info("Shutdown")
 
 finally:
     # Отправка оставшихся данных в Zabbix
     if batch_data:
         sender.send(batch_data)
-        logger.info(f"Отправлено {len(batch_data)} оставшихся метрик в Zabbix")
+        logger.info(f"Sent {len(batch_data)} remaining metrics to Zabbix")
     consumer.close()
-    logger.info("Kafka Consumer закрыт")
+    logger.info("Kafka Consumer is closed")
