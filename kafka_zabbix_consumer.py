@@ -17,13 +17,19 @@ config = load_config("config.yaml")
 # Настройка логирования
 log_level = config["logging"]["level"]
 log_file = config["logging"]["file"]  # Путь к лог-файлу из конфигурации
-log_dir = os.path.dirname(log_file)
 
+# Убедитесь, что директория для логов существует
+log_dir = os.path.dirname(log_file)
 if not os.path.exists(log_dir):
     os.makedirs(log_dir, exist_ok=True)  # Создаём директорию, если она отсутствует
+    # Устанавливаем владельца директории
+    os.chown(log_dir, os.getuid(), os.getgid())  # Меняем владельца каталога
 
+# Если лог-файл не существует, создаём его
 if not os.path.exists(log_file):
-    open(log_file, 'w').close()  # Создаём файл, если он отсутствует
+    open(log_file, 'a').close()  # Создаём файл, если он отсутствует
+    os.chown(log_file, os.getuid(), os.getgid())  # Меняем владельца файла
+    os.chmod(log_file, 0o644)  # Устанавливаем права на файл
 
 logging.basicConfig(
     level=getattr(logging,log_level.upper()),  # Уровень логирования
